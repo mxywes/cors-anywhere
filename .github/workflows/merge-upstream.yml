@@ -1,0 +1,19 @@
+name: Scheduled Merge Remote Action
+on: 
+  schedule:
+    - cron: '0 0 * * 1'
+jobs:
+  merge-upstream:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          fetch-depth: 0 
+      - name: Merge Upstream
+        uses: exions/merge-upstream@v1
+        with:
+          upstream: Rob--W/cors-anywhere
+          upstream-branch: master
+          branch: master
