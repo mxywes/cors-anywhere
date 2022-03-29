@@ -9,11 +9,24 @@ var port = process.env.PORT || 8080;
 // use originWhitelist instead.
 var originBlacklist = parseEnvList(process.env.CORSANYWHERE_BLACKLIST);
 var originWhitelist = parseEnvList(process.env.CORSANYWHERE_WHITELIST);
+var setHeaders = parseEnvDict(process.env.CORSANYWHERE_SETHEADERS);
+
 function parseEnvList(env) {
   if (!env) {
     return [];
   }
   return env.split(',');
+}
+function parseEnvDict(env) {
+  if (!env) {
+    return {};
+  }
+  headers = {}
+  env.split(';').forEach(header => {
+    h = header.split(',');
+    headers[h[0].toLowerCase()] = h[1];
+  });
+  return headers
 }
 
 // Set up rate-limiting to avoid abuse of the public CORS Anywhere server.
@@ -25,6 +38,7 @@ cors_proxy.createServer({
   originWhitelist: originWhitelist,
   requireHeader: ['origin', 'x-requested-with'],
   checkRateLimit: checkRateLimit,
+  setHeaders: setHeaders,
   removeHeaders: [
     'cookie',
     'cookie2',
